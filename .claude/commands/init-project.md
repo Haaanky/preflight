@@ -135,8 +135,11 @@ grep -r 'pr-preview\|preview_url\|PREVIEW_URL\|page_url' .github/workflows/ 2>/d
 ## Step 7 — Detect companion reads
 
 ```bash
-ls AI_BACKENDS.md ASSET_POLICY.md CONTRIBUTING.md ARCHITECTURE.md ADR/ docs/CLAUDE*.md 2>/dev/null
+ls AI_BACKENDS.md ASSET_POLICY.md CONTRIBUTING.md ARCHITECTURE.md ADMIN.md ADR/ docs/CLAUDE*.md 2>/dev/null
 ```
+
+If `ADMIN.md` is present, always add it to `companion_reads` — it contains elevated
+commands that Claude must know about before touching Task Scheduler or system services.
 
 ---
 
@@ -180,10 +183,17 @@ Examples by stack (include only what applies):
   write them to config.toml
 - Task Scheduler installs require an elevated (admin) terminal — Claude cannot elevate itself;
   if install fails with access denied, instruct the user to run the command as Administrator
+- After modifying task_scheduler.py: must reinstall task (End → install → Run) for XML
+  changes to take effect; a running task does not reload its own config
+- Tray icon requires InteractiveToken in Task Scheduler XML — without it the process runs
+  in session 0 and the icon is never visible to the user
+- RDP sessions: tray icon invisible when session is disconnected (not logged off) — expected,
+  not a bug; icon reappears on reconnect
 - config.toml must be gitignored — it contains user-specific paths and credentials;
   always provide config.toml.example with all fields and safe placeholder values
-- schtasks commands to manage the task: Run, End, Query /TN <TaskName>
+- schtasks commands to manage the task: Run, End, Query /TN <TaskName> /FO LIST
 - Log files are in `logs/` — read with `powershell -Command "Get-Content logs\sync.log -Tail 30"`
+- ADMIN.md: if present, read it at session start — it lists all commands that need admin rights
 ```
 
 ---

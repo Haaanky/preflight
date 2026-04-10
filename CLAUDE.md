@@ -245,7 +245,40 @@ These rules apply whenever the project targets or runs on Windows.
   with an exact copy-paste command to run in an Administrator terminal
 - Before asking for elevation, confirm it is genuinely required; prefer user-space
   alternatives (`HKCU` registry, user-level scheduled tasks) where possible
-- Use `schtasks /Query /TN <TaskName>` to verify task state; never assume install succeeded
+- Use `schtasks /Query /TN <TaskName> /FO LIST` to verify task state; never assume install succeeded
+- **Reinstall to apply config changes** — if `task_scheduler.py` is modified, the task must
+  be reinstalled (End → install → Run) for changes to take effect; a running task does not
+  pick up XML changes automatically
+
+### System Tray Icon and Interactive Session
+
+- **`InteractiveToken` is required** for tray icons to appear in the user's desktop session.
+  Without it, the task runs headless in session 0 and the icon is never shown.
+  Task XML must include:
+  ```xml
+  <Principals>
+    <Principal id="Author">
+      <LogonType>InteractiveToken</LogonType>
+      <RunLevel>LeastPrivilege</RunLevel>
+    </Principal>
+  </Principals>
+  ```
+- **RDP (Remote Desktop) edge case** — if the session is disconnected (not logged off),
+  the task continues running in the background but the tray icon is invisible until the
+  user reconnects. This is expected behaviour, not a bug. Document it in `ADMIN.md`.
+
+### ADMIN.md Pattern
+
+When a project has operations that require elevated rights or are risky to run incorrectly,
+collect them in a dedicated `ADMIN.md` file at the repo root. This file is a companion read:
+
+- List every command that needs an Administrator terminal
+- Group by purpose: install, uninstall, reinstall, troubleshoot
+- Include the `cd` to the correct directory before each command block
+- Note which operations do *not* require elevation (e.g. `--set-password`, connection validation)
+
+If `ADMIN.md` exists in the repo, add it to `companion_reads` in the manifest and read it
+at session start. Never ask the user to find admin commands — point them to this file.
 
 ### Python on Windows
 

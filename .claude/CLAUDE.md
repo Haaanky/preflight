@@ -76,7 +76,8 @@ known_limitations: []
   # - ~
 
 # Files that must be read at every session start (beyond CLAUDE.md itself).
-# detect: look for AI_BACKENDS.md, ASSET_POLICY.md, CONTRIBUTING.md, ARCHITECTURE.md
+# detect: look for AI_BACKENDS.md, ASSET_POLICY.md, CONTRIBUTING.md, ARCHITECTURE.md, ADMIN.md
+# ADMIN.md — if present, always include: contains elevated commands for Task Scheduler etc.
 companion_reads: []
   # - ~
 ```
