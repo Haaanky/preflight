@@ -232,6 +232,47 @@ Do **not** spawn subagents for:
 
 ---
 
+## Windows-Specific Rules
+
+These rules apply whenever the project targets or runs on Windows.
+`/init-project` activates them when it detects `requirements.txt` + Windows signals
+(e.g. `schtasks`, `winreg`, `pystray`, `winotify`, `keyring` in dependencies).
+
+### Elevation and Task Scheduler
+
+- **Claude cannot elevate itself** — operations requiring admin rights (Task Scheduler
+  install, writing to `HKLM` registry, installing services) must be handed to the user
+  with an exact copy-paste command to run in an Administrator terminal
+- Before asking for elevation, confirm it is genuinely required; prefer user-space
+  alternatives (`HKCU` registry, user-level scheduled tasks) where possible
+- Use `schtasks /Query /TN <TaskName>` to verify task state; never assume install succeeded
+
+### Python on Windows
+
+- **Use `py` not `python`** — the Python Launcher (`py.exe`) is the standard Windows
+  entry point; verify availability with `where py` at session start
+- **Virtualenv paths use backslash in cmd, forward slash in bash** — always use
+  `.venv/Scripts/python.exe` for direct invocation to avoid activation ambiguity
+- **Never commit `config.toml` or any file with user paths or credentials** — always
+  provide a `config.toml.example` with placeholder values and verify `.gitignore` covers it
+
+### Windows Credential Manager
+
+- Passwords and secrets must be stored via `keyring` (Windows Credential Manager),
+  never in config files, `.env`, or environment variables passed on the command line
+- Inform the user where to find stored credentials:
+  Kontrollpanelen → Autentiseringsuppgifter → Windows-autentiseringsuppgifter
+- To update a stored password: `py main.py --set-password` (or equivalent entry point)
+
+### Logging on Windows
+
+- Log files land in `logs\` relative to the project root
+- Read recent log output without requiring the user to open a file explorer:
+  `powershell -Command "Get-Content logs\sync.log -Tail 30"`
+- Never use `tail` — it is not available on Windows without WSL
+
+---
+
 ## Security
 
 - Never introduce command injection, XSS, SQL injection, or other OWASP Top 10 vulnerabilities

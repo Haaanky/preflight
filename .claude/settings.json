@@ -10,6 +10,15 @@
 
   "denyTools": [],
 
+  // ─── Note on settings.local.json ─────────────────────────────────────────────
+  //
+  // For machine-local tool approvals (e.g. specific Bash commands you've already
+  // approved interactively), Claude Code writes them to .claude/settings.local.json.
+  // That file is gitignored by default — it should NOT be committed, as it contains
+  // approvals specific to one developer's machine and workflow.
+  // Add to .gitignore: .claude/settings.local.json
+  //
+
   "hooks": {
 
     "SessionStart": [

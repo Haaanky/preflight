@@ -67,6 +67,11 @@ branch_base: main
 # ── Constraints ───────────────────────────────────────────────────────────────
 # Populated during init or as new limitations are discovered in later sessions.
 # Format: "symptom — root cause — fix/workaround"
+# Examples from real projects:
+#   - "Task Scheduler install fails silently — requires admin terminal — user must run:
+#      .venv\Scripts\python.exe -m scheduler.task_scheduler install (as Administrator)"
+#   - "HTTPS proxy in CI blocks Chromium — do not run playwright locally inside Claude cloud"
+#   - "call_deferred() required for scene changes — silent failure in Godot exported builds"
 known_limitations: []
   # - ~
 

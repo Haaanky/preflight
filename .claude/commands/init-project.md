@@ -58,6 +58,11 @@ ls package-lock.json yarn.lock pnpm-lock.yaml bun.lockb uv.lock Pipfile.lock 2>/
 | `uv.lock` | uv |
 | `Pipfile.lock` | pipenv |
 
+> **Windows note:** On Windows, the Python executable may be `py` (Python Launcher),
+> not `python` or `python3`. Check with `where py` before assuming `python` works.
+> Virtual env activation is `.venv\Scripts\activate` (cmd) or `.venv/Scripts/activate` (bash).
+> Record the correct invoke style in `test_command` and `known_limitations`.
+
 ---
 
 ## Step 4 — Detect test framework and command
@@ -164,6 +169,21 @@ Examples by stack (include only what applies):
 - Tests live in `<test_paths>`; run with `<test_command>`
 - Use fixtures for shared setup; never duplicate setup code across test files
 - Type annotations required on all public functions (PEP 484)
+```
+
+**Python + Windows (e.g. system-tray app, scheduled tasks, Credential Manager):**
+```markdown
+- Python launcher: use `py` not `python` — verify with `where py` at session start
+- Virtual env: `.venv/Scripts/python.exe` for direct invocation; never assume venv is activated
+- Windows Credential Manager (keyring): passwords stored under Kontrollpanelen →
+  Autentiseringsuppgifter → Windows-autentiseringsuppgifter; never commit passwords or
+  write them to config.toml
+- Task Scheduler installs require an elevated (admin) terminal — Claude cannot elevate itself;
+  if install fails with access denied, instruct the user to run the command as Administrator
+- config.toml must be gitignored — it contains user-specific paths and credentials;
+  always provide config.toml.example with all fields and safe placeholder values
+- schtasks commands to manage the task: Run, End, Query /TN <TaskName>
+- Log files are in `logs/` — read with `powershell -Command "Get-Content logs\sync.log -Tail 30"`
 ```
 
 ---
