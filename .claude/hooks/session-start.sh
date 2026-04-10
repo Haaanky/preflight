@@ -18,9 +18,18 @@ if [ "$MANIFEST_STATUS" = "pending" ] || [ "$MANIFEST_STATUS" = "missing" ]; the
   echo ""
   echo "╔══════════════════════════════════════════════════════════════╗"
   echo "║  PROJECT MANIFEST IS INCOMPLETE                              ║"
-  echo "║  Run /init-project before starting any other task.           ║"
-  echo "║  It will auto-detect your stack and fill in .claude/CLAUDE.md║"
+  echo "║  Run: bash .claude/scripts/init.sh                           ║"
+  echo "║  Or invoke /init-project — it runs the script for you.       ║"
   echo "╚══════════════════════════════════════════════════════════════╝"
+  echo ""
+  # Pre-flight: run detect.sh and print the raw output so Claude sees it
+  # immediately without needing to run a separate command
+  DETECT_SCRIPT="$CLAUDE_PROJECT_DIR/.claude/scripts/detect.sh"
+  if [ -f "$DETECT_SCRIPT" ]; then
+    echo "--- Pre-flight detection (run init.sh to apply) ---"
+    bash "$DETECT_SCRIPT" 2>/dev/null || true
+    echo "---------------------------------------------------"
+  fi
   echo ""
   exit 0
 fi

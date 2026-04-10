@@ -23,6 +23,30 @@ but always read the actual manifest — the hook output may be truncated.
 
 ---
 
+## Scripts Before Reasoning
+
+> **If a script can produce the answer, run the script. Don't read files manually to compute what a script already tells you.**
+
+This is the core principle for token efficiency. Apply it everywhere:
+
+| Instead of… | Do this |
+|---|---|
+| Reading `package.json`, `requirements.txt`, lockfiles to detect the stack | `bash .claude/scripts/detect.sh` |
+| Manually editing the YAML manifest field by field | `bash .claude/scripts/fill-manifest.sh` |
+| Writing stack-specific rules from memory | `bash .claude/scripts/gen-stack-rules.sh` |
+| Doing all three | `bash .claude/scripts/init.sh` |
+
+**When to use scripts vs reasoning:**
+- **Scripts** — anything that can be answered by reading files and matching patterns: stack detection, version numbers, file existence, config values
+- **Reasoning** — ambiguous trade-offs, unknown fields the script couldn't detect, architectural decisions, conflict resolution
+
+**Adding new detection logic:**
+If you discover a new pattern worth detecting (new framework, new platform, new Windows signal),
+add it to `.claude/scripts/detect.sh` — not to a command file or CLAUDE.md.
+Scripts are the single source of truth for detection; prose instructions are for the ambiguous remainder.
+
+---
+
 ## MANDATORY RULES — Read First, Always
 
 These rules apply to every task, every file, every session. No exceptions.
