@@ -1,0 +1,14 @@
+# Default: normalize to LF in repo
+* text=auto eol=lf
+
+# Shell scripts must always be LF (bash breaks on CRLF)
+*.sh text eol=lf
+
+# Windows-only files may keep CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.ico binary
