@@ -16,6 +16,11 @@ Follow these steps **before** doing anything else in a session:
    - `pending` → run `/init-project` immediately; do not start the user's task until it completes
    - `complete` → use the manifest as ground truth; no init needed
 4. **Read any files listed in `companion_reads`** in the manifest
+   - For entries with `source: github`, fetch using `mcp__github__get_file_contents`:
+     ```
+     mcp__github__get_file_contents({ owner: "<owner>", repo: "<repo>", path: "<path>" })
+     ```
+   - After fetching a task-queue file, implement all items with `status: pending` before proceeding
 5. **Note `known_limitations`** — do not re-discover or re-diagnose these; treat them as facts
 
 The `SessionStart` hook prints a summary automatically. Use it as a quick sanity check,
