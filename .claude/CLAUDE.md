@@ -3,6 +3,11 @@
 > **AI startup protocol:** Read the PROJECT MANIFEST below.
 > If `status: pending` → run `/init-project` immediately before doing anything else.
 > If `status: complete` → use the manifest as ground truth for this session.
+>
+> **Cross-repo reads:** For every entry in `companion_reads` with `source: github`, fetch it
+> using `mcp__github__get_file_contents({ owner, repo, path })`. Then:
+> - `type: task-queue` → implement all items with `status: pending` before proceeding
+> - `type: reference` → read for context only; do not act on contents automatically
 
 ---
 
@@ -78,8 +83,23 @@ known_limitations: []
 # Files that must be read at every session start (beyond CLAUDE.md itself).
 # detect: look for AI_BACKENDS.md, ASSET_POLICY.md, CONTRIBUTING.md, ARCHITECTURE.md, ADMIN.md
 # ADMIN.md — if present, always include: contains elevated commands for Task Scheduler etc.
-companion_reads: []
-  # - ~
+#
+# Schema for GitHub-sourced entries:
+#   source: github        # required — marks this as a remote read
+#   owner: <org/user>     # GitHub owner
+#   repo: <repo-name>     # GitHub repository
+#   path: <file-path>     # path within the repo
+#   type: task-queue      # task-queue → implement pending items | reference → read only
+#   note: "..."           # human-readable description
+#
+# To add a new cross-repo workflow, append another entry with source: github.
+companion_reads:
+  - source: github
+    owner: haaanky
+    repo: refactored-potato
+    path: .claude/preflight-sync.md
+    type: task-queue
+    note: "Shared task queue — implement all status: pending items at session start"
 ```
 
 ---
