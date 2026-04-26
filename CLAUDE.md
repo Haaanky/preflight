@@ -20,7 +20,9 @@ Follow these steps **before** doing anything else in a session:
      ```
      mcp__github__get_file_contents({ owner: "<owner>", repo: "<repo>", path: "<path>" })
      ```
-   - After fetching a task-queue file, implement all items with `status: pending` before proceeding
+   - Fetch **all** `source: github` entries — a project may pull from multiple repos
+   - `type: task-queue` → implement every item with `status: pending` before proceeding
+   - `type: reference` → read for context only; do not act on contents automatically
 5. **Note `known_limitations`** — do not re-discover or re-diagnose these; treat them as facts
 
 The `SessionStart` hook prints a summary automatically. Use it as a quick sanity check,
